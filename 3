@@ -1,0 +1,134 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+const int MAXSIZE = 100;
+
+class CPeopleInfo 
+{
+public:
+string m_name; 
+string m_number; 
+int m_age; 
+int m_isMan; 
+public:
+void Input() 
+{
+cout << "请输入姓名、名单编号、年龄、性别(0 or 1)， 用空格或换行隔开：\n";
+cin >> m_name >> m_number >> m_age >> m_isMan;
+if(m_isMan > 1) m_isMan = 1;
+if(m_isMan < 0) m_isMan = 0;
+}
+int GetOrder() 
+{
+if(m_age >= 40) return m_isMan + 4;
+else if(m_age >= 10) return m_isMan + 2;
+else return m_isMan;
+}
+};
+
+class Queue 
+{
+public:
+CPeopleInfo q[MAXSIZE];
+int front, end;
+
+Queue()
+{
+front = end = 0;
+}
+
+void Push(CPeopleInfo t) 
+{
+if((end + 1) % MAXSIZE == front) return; 
+end = (end + 1) % MAXSIZE;
+q[end] = t;
+}
+
+void Call() 
+{
+if(front == end) return;
+front = (front + 1) % MAXSIZE;
+cout << q[front].m_name << endl;
+cout << q[front].m_number << endl;
+}
+
+void Display(int order)
+{
+if(order == 0) cout << "儿科（女）:\n";
+if(order == 1) cout << "儿科（男）:\n";
+if(order == 2) cout << "青年科（女）:\n";
+if(order == 3) cout << "青年科（男）:\n";
+if(order == 4) cout << "老年科（女）:\n";
+if(order == 5) cout << "老年科（男）:\n";
+
+int num = 0;
+for(int i = front; i != end; )
+{
+i = (i+1) % MAXSIZE;
+if(q[i].GetOrder() == order)
+{
+cout << "                " << num + 1 << endl;
+cout << "                姓名： " << q[i].m_name << endl;
+cout << "                编号： " << q[i].m_number << endl;
+num++;
+}
+}
+
+if(num == 0) cout << "                无人排队\n";
+}
+
+void Display(int order1, int order2) 
+{
+int num = 0;
+for(int i = front; i != end; )
+{
+i = (i+1) % MAXSIZE;
+if(q[i].GetOrder() == order1 || q[i].GetOrder() == order2)
+{
+cout << "                " << num + 1 << endl;
+num++;
+
+}
+}
+
+if(num == 0) cout << "                无病人\n";
+}
+
+void DisplayAll() 
+{
+cout << endl << "排队信息：" << endl;
+for(int i = 0; i < 6; i++)
+Display(i);
+}
+
+void DisplayAll_D() 
+{
+
+cout << endl << "各科室总体排队信息：" << endl;
+cout << "儿科:\n";
+Display(0, 1);
+cout << "青年科:\n";
+Display(2, 3);
+cout << "老年科:\n";
+Display(4, 5); 
+}
+};
+
+int main()
+{
+Queue Q;
+cout << "请输入总人数：\n";
+int n;
+cin >> n;
+CPeopleInfo t;
+for(int i = 0; i < n; i++)
+{
+t.Input();
+if(t.m_age > 0 && t.m_age <=150)
+Q.Push(t);
+}
+Q.DisplayAll();
+Q.DisplayAll_D();
+return 0;
+}
